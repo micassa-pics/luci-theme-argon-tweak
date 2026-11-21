@@ -51,10 +51,6 @@ To enable history, add a rate-limited log action with the exact prefix `MICASSA_
 
 Select the LANs and address families to cover. A routed guest LAN can have its own policy. Traffic exchanged directly by devices on a bridge can bypass the router firewall. The installation prompt walks through package selection, exceptions, testing and rollback for the chosen options.
 
-### Optional abuse.ch URLhaus feed
-
-URLhaus provides malware infrastructure data. Enable it in banIP if you want that additional protection. The installation assistant walks you through signing in to your own abuse.ch account, obtaining your personal **Auth-Key**, entering it privately under **Services → banIP → Feed Selection → Feed Auth-Key**, selecting **urlhaus**, and checking the feed update after reloading banIP. [Official abuse.ch sign-in](https://auth.abuse.ch/) · [URLhaus Auth-Key instructions](https://urlhaus-api.abuse.ch/#auth_key)
-
 **Touch menus.** If the installed LuCI dropdown implementation differs, the installer skips the JavaScript patch and reports it.
 
 For custom roles, use UCI list options on the local `micassa.status` section. Add logical interface names to `downstream`, `upstream`, or `ignore`. Listing an interface in both roles marks it shared. These options affect display only. For example, after creating the section above:
@@ -81,3 +77,7 @@ uci commit micassa
 ~~~
 
 Refresh Status Overview after changing these values.
+
+### Optional abuse.ch URLhaus feed
+
+URLhaus provides malware infrastructure data. After completing the main setup and verifying your selected features, you can enable this additional feed in banIP. The installation assistant walks you through signing in to your own abuse.ch account, obtaining your personal **Auth-Key**, entering it privately under **Services → banIP → Feed Selection → Feed Auth-Key**, selecting **urlhaus**, and checking the feed update after reloading banIP. [Official abuse.ch sign-in](https://auth.abuse.ch/) · [URLhaus Auth-Key instructions](https://urlhaus-api.abuse.ch/#auth_key)
