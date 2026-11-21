@@ -4,7 +4,7 @@ cd "$(dirname "$0")"
 stage=$(pwd)
 test -f /www/luci-static/resources/ui.js && test -d /usr/share/luci/menu.d || { echo 'Run on a LuCI router.' >&2; exit 1; }
 umask 077
-backup=$(mktemp -d /root/micassa-rollback.XXXXXX)
+backup=$(mktemp -d /root/argon-tweak-rollback.XXXXXX)
 mkdir "$backup/before"
 : > "$backup/added"
 cat > "$backup/rollback.sh" <<'ROLLBACK'
@@ -34,7 +34,7 @@ put() {
 	else
 		printf '%s\n' "$dst" >> "$backup/added"
 	fi
-	tmp=$(mktemp "/$dst.micassa.XXXXXX")
+	tmp=$(mktemp "/$dst.argon-tweak.XXXXXX")
 	cat "$src" > "$tmp" && chmod "$mode" "$tmp" && mv -f "$tmp" "/$dst" || { rm -f "$tmp"; return 1; }
 }
 [ -e /etc/init.d/dns-redirects ] || touch "$backup/new-collector"

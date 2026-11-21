@@ -258,7 +258,7 @@ function portChart(link) {
 	for (const t of samplesByTime.keys()) if (t < start) samplesByTime.delete(t);
 	const samples = [...samplesByTime].filter(([t]) => t <= now).sort((a, b) => a[0] - b[0]);
 	const configured = key => {
-		const value = Number(uci.get('micassa', 'status', key));
+		const value = Number(uci.get('argon-tweak', 'status', key));
 		return Number.isFinite(value) && value > 0 ? value : null;
 	};
 	const speed = parseFloat(link.status?.speed);
@@ -404,7 +404,7 @@ function renderPort({role, name, label, status}) {
 async function discoverPorts() {
 	const [nets, upstream, upstream6] = await Promise.all([
 		network.getNetworks(), network.getWANNetworks(), network.getWAN6Networks(),
-		L.resolveDefault(uci.load('firewall'), null), L.resolveDefault(uci.load('micassa'), null)
+		L.resolveDefault(uci.load('firewall'), null), L.resolveDefault(uci.load('argon-tweak'), null)
 	]);
 	const routed = new Set([...upstream, ...upstream6].map(net => net.getName()));
 	const wanZone = new Set();
@@ -412,7 +412,7 @@ async function discoverPorts() {
 		if (zone.name !== 'wan') continue;
 		for (const iface of [].concat(zone.network || []).flatMap(value => value.split(/\\s+/))) wanZone.add(iface);
 	}
-	const roles = key => new Set([].concat(uci.get('micassa', 'status', key) || []).flatMap(v => v.split(/\s+/)));
+	const roles = key => new Set([].concat(uci.get('argon-tweak', 'status', key) || []).flatMap(v => v.split(/\s+/)));
 	const local = roles('downstream'), upstreamRoles = roles('upstream'), hidden = roles('ignore');
 	const groups = new Map();
 	for (const net of nets) {

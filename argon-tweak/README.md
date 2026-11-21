@@ -3,8 +3,10 @@
 Start with the [copyable installation assistant prompt](install-prompt.md). This overlay targets OpenWrt 25.12 LuCI and Argon 3.1.4. Install the desired LuCI applications first. On the router, from an extracted copy of this branch, run:
 
 ```sh
-sh micassa/install.sh
+sh argon-tweak/install.sh
 ```
+
+When upgrading from an earlier project name, copy your existing overlay settings to `/etc/config/argon-tweak` before installation. Update any existing DNS logging rule to use the prefix in the DNS Redirects section and restart the collector after installation. Fresh installs can skip this step.
 
 The script backs up replaced files, skips menu and permission overrides for absent optional apps, reloads rpcd and prints a rollback command. Save the backup privately. Refresh LuCI and sign in again. Roll back before upgrading LuCI and review compatibility afterward.
 
@@ -13,10 +15,10 @@ The script backs up replaced files, skips menu and permission overrides for abse
 **Names and DHCP.** Use a router resolver that can answer client PTR queries. To enable the optional Pi-hole DHCP badge, substitute its local IPv4 address below. The badge needs an accessible unauthenticated DHCP-status endpoint and a gateway matching the primary LAN.
 
 ```sh
-touch /etc/config/micassa
-uci set micassa.status=status
-uci set micassa.status.pihole_ipv4='YOUR_PIHOLE_LAN_IPV4'
-uci commit micassa
+touch /etc/config/argon-tweak
+uci set argon-tweak.status=status
+uci set argon-tweak.status.pihole_ipv4='YOUR_PIHOLE_LAN_IPV4'
+uci commit argon-tweak
 ```
 
 ### Firewall Summary
@@ -33,7 +35,7 @@ Open **Status → DNS Redirects** to identify clients sending plain DNS to an un
 
 The collector reads tagged IPv4 port 53 firewall events. It records the original destination; the matching firewall rule determines whether the packet was redirected or blocked. For queried domain names and Pi-hole's answer, consult the Pi-hole query log. Encrypted DNS blocks on other ports must be checked in the matching firewall or banIP counters. An empty event table can also mean the client used its assigned resolver, the traffic stayed on the same bridge, or logging was disabled.
 
-To enable history, add a rate-limited log action with the exact prefix `MICASSA_DNS_REDIRECT: ` (including the trailing space) at the point where the original client and destination are still visible, before destination NAT. Apply rate limiting to the **log action only** so all matching packets still reach the enforcement rule. The collector keeps the latest 1,000 logged events and checkpoints every 30 minutes and on clean shutdown. Start it on the router:
+To enable history, add a rate-limited log action with the exact prefix `argon-tweak-dns-redirect: ` (including the trailing space) at the point where the original client and destination are still visible, before destination NAT. Apply rate limiting to the **log action only** so all matching packets still reach the enforcement rule. The collector keeps the latest 1,000 logged events and checkpoints every 30 minutes and on clean shutdown. Start it on the router:
 
 ```sh
 /etc/init.d/dns-redirects enable
@@ -53,11 +55,11 @@ Select the LANs and address families to cover. A routed guest LAN can have its o
 
 **Touch menus.** If the installed LuCI dropdown implementation differs, the installer skips the JavaScript patch and reports it.
 
-For custom roles, use UCI list options on the local `micassa.status` section. Add logical interface names to `downstream`, `upstream`, or `ignore`. Listing an interface in both roles marks it shared. These options affect display only. For example, after creating the section above:
+For custom roles, use UCI list options on the local `argon-tweak.status` section. Add logical interface names to `downstream`, `upstream`, or `ignore`. Listing an interface in both roles marks it shared. These options affect display only. For example, after creating the section above:
 
 ```sh
-uci add_list micassa.status.downstream='guest'
-uci commit micassa
+uci add_list argon-tweak.status.downstream='guest'
+uci commit argon-tweak
 ```
 
 ### Traffic chart scales
@@ -67,13 +69,13 @@ Set each direction in Mbps. WAN download corresponds to RX and upload to TX. LAN
 Example for a 500/50 Mbps internet plan and symmetric gigabit LAN:
 
 ~~~sh
-touch /etc/config/micassa
-uci set micassa.status=status
-uci set micassa.status.wan_down_mbps='500'
-uci set micassa.status.wan_up_mbps='50'
-uci set micassa.status.lan_down_mbps='1000'
-uci set micassa.status.lan_up_mbps='1000'
-uci commit micassa
+touch /etc/config/argon-tweak
+uci set argon-tweak.status=status
+uci set argon-tweak.status.wan_down_mbps='500'
+uci set argon-tweak.status.wan_up_mbps='50'
+uci set argon-tweak.status.lan_down_mbps='1000'
+uci set argon-tweak.status.lan_up_mbps='1000'
+uci commit argon-tweak
 ~~~
 
 Refresh Status Overview after changing these values.

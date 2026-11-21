@@ -28,7 +28,7 @@ fi
 if [ "$2" = dhcp_status ]; then
 	[ -n "$lan_dev" ] && [ "$(uci -q get dhcp.lan.ignore)" = 1 ] || { echo '{}'; exit 0; }
 	network_get_ipaddr lan_address lan || { echo '{}'; exit 0; }
-	pihole=$(uci -q get micassa.status.pihole_ipv4) || { echo '{}'; exit 0; }
+	pihole=$(uci -q get argon-tweak.status.pihole_ipv4) || { echo '{}'; exit 0; }
 	echo "$pihole" | awk -F. 'NF!=4 {exit 1} {for(i=1;i<=4;i++) if($i !~ /^[0-9]+$/ || length($i)>3 || $i>255) exit 1}' || { echo '{}'; exit 0; }
 	config=$(curl --fail --silent --noproxy '*' --interface "$lan_dev" --connect-timeout 1 --max-time 2 \
 		"http://$pihole/api/config/dhcp") || { echo '{}'; exit 0; }

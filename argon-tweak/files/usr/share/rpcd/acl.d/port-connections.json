@@ -10,7 +10,7 @@
         ]
       },
       "uci": [
-        "firewall", "micassa"
+        "firewall", "argon-tweak"
       ]
     }
   }

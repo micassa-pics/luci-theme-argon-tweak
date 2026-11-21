@@ -42,7 +42,7 @@ snapshot() {
 				# /proc/uptime is precise to a hundredth of a second.
 				if (stamp + 0 < cutoff + 0.01) next
 			}
-			if (!match($0, / kernel: (\[[^]]*\][[:space:]]*)?MICASSA_DNS_REDIRECT: /)) next
+			if (!match($0, / kernel: (\[[^]]*\][[:space:]]*)?argon-tweak-dns-redirect: /)) next
 			split(substr($0, RSTART + RLENGTH), fields, / +/)
 			client = server = proto = port = ""
 			for (i in fields) {
