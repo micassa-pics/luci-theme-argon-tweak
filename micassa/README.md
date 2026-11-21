@@ -21,9 +21,13 @@ uci commit micassa
 
 ### Firewall Summary
 
+[View the Firewall Summary mockup with fictional rules and counters.](../docs/firewall-summary-mockup.png)
+
 Open **Status → Firewall Summary** and select **Refresh** to read the active nftables rules. The page groups them under **DNS protection**, **Port forwards**, **Traffic rules**, **IP blocklists** and **System rules**. Search for a rule name, address or port. Expand a row to inspect the matches and action. **Hits** counts packets where counters are available. A dash means the count is unavailable. Custom DNS rules can appear under other headings, so use **Detailed rules** to check the active chain and **Firewall settings** to edit policy.
 
 ### DNS Redirects
+
+[View the DNS Redirects mockup with fictional clients and grouped events.](../docs/dns-redirects-mockup.png)
 
 Open **Status → DNS Redirects** to identify clients sending plain DNS to an unexpected resolver. **Devices** shows each client's latest activity and counts for local/private and other DNS destinations. The two event tables show time, device, client IP, original DNS server and TCP or UDP. Use **Group** to combine repeated attempts by client, destination and protocol. **Clear Entries** asks for confirmation and clears saved history as well.
 
