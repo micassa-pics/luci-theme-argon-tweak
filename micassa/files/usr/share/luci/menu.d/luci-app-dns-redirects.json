@@ -1,0 +1,8 @@
+{
+	"admin/status/dns-redirects": {
+		"title": "DNS Redirects",
+		"order": 95,
+		"action": { "type": "view", "path": "status/dns-redirects-layout" },
+		"depends": { "acl": [ "luci-app-dns-redirects" ] }
+	}
+}

@@ -1,0 +1,38 @@
+#!/bin/sh
+
+. /usr/share/libubox/jshn.sh
+
+case "$1:$2" in
+	list:)
+		printf '%s\n' '{"history":{},"hostname":{"ip":""},"clear":{}}'
+		;;
+	call:history)
+		entries=$(/usr/libexec/dns-redirects snapshot) || exit 1
+		json_init
+		json_add_string entries "$entries"
+		json_dump
+		;;
+	call:clear)
+		/usr/libexec/dns-redirects clear || exit 1
+		printf '%s\n' '{"cleared":true}'
+		;;
+	call:hostname)
+		json_load "$(cat)" || exit 1
+		json_get_var ip ip
+		ptr=$(printf '%s\n' "$ip" | awk -F '[.]' '
+			NF == 4 {
+				for (i = 1; i <= 4; i++)
+					if ($i !~ /^[0-9]+$/ || length($i) > 3 || $i > 255) exit
+				printf "%d.%d.%d.%d.in-addr.arpa.\n", $4, $3, $2, $1
+			}')
+		name=
+		if [ -n "$ptr" ] && /usr/libexec/dns-redirects snapshot | awk -v ip="$ip" '$2 == ip { seen = 1 } END { exit !seen }'; then
+			name=$(nslookup -timeout=1 -retry=1 -type=PTR "$ptr" 2>/dev/null |
+				awk 'tolower($0) ~ /[[:space:]]name[[:space:]]*=/ { sub(/[.]$/, "", $NF); print $NF; exit }')
+		fi
+		json_init
+		json_add_string name "$name"
+		json_dump
+		;;
+	*) exit 2 ;;
+esac

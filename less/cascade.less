@@ -57,3 +57,16 @@
 // Page/plugin adapters, then viewport adaptations.
 @import "page-fix.less";
 @import "responsive.less";
+
+/* Wrap long touch-menu choices inside the available content area. */
+.cbi-dropdown[open] > ul.dropdown.argon-touch-dropdown {
+	box-sizing: border-box;
+	min-width: 0;
+}
+
+.cbi-dropdown[open] > ul.dropdown.argon-touch-dropdown > li,
+.cbi-dropdown[open] > ul.dropdown.argon-touch-dropdown > li > label {
+	white-space: normal;
+	overflow-wrap: anywhere;
+}
+

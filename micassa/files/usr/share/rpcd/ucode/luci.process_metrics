@@ -1,0 +1,40 @@
+'use strict';
+
+import { glob, open } from 'fs';
+
+function readProc(path) {
+	const handle = open(path, 'r');
+	if (!handle) return '';
+	const contents = handle.read('all');
+	handle.close();
+	return contents ?? '';
+}
+
+return {
+	'luci.process_metrics': {
+		sample: {
+			call: function() {
+				const cpu = match(readProc('/proc/stat'), /^cpu\s+([^\n]+)/);
+				const memory = match(readProc('/proc/meminfo'), /^MemTotal:\s+([0-9]+)\s+kB/);
+				if (!cpu || !memory)
+					die('Kernel usage totals are unavailable');
+				const ticks = split(trim(cpu[1]), /\s+/);
+				let cpuTicks = 0;
+				// Guest ticks are included in user and nice time already.
+				for (let i = 0; i < 8; i++) cpuTicks += int(ticks[i] ?? 0);
+
+				const processes = {};
+				for (let path in glob('/proc/[0-9]*/stat')) {
+					const stat = match(readProc(path), /^([0-9]+) \(.*\) [A-Za-z] ([^\n]+)/);
+					if (!stat) continue;
+					const fields = split(stat[2], ' ');
+					if (length(fields) <= 18) continue;
+					// After PID, comm and state, fields 14, 15 and 22 are at offsets 10, 11 and 18.
+					const rss = match(readProc('/proc/' + stat[1] + '/status'), /\nVmRSS:[ \t]+([0-9]+)[ \t]+kB/);
+					processes[stat[1]] = [int(fields[18]), int(fields[10]) + int(fields[11]), rss ? int(rss[1]) : null];
+				}
+				return { cpuTicks, memoryKiB: int(memory[1]), processes };
+			}
+		}
+	}
+};

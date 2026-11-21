@@ -1,0 +1,30 @@
+{% include('header') %}
+
+{%-
+	const detailed = ctx.request_path[2] == 'nftables-detail';
+	const links = [
+		['admin/status/nftables', _('Summary'), !detailed],
+		['admin/status/nftables-detail', _('Detailed rules'), detailed],
+		['admin/network/firewall/rules', _('Firewall settings'), false]
+	];
+-%}
+<nav class="fw-summary-tabs" aria-label="{{ _('Firewall navigation') }}" style="margin-bottom: .85rem">
+	<ul class="tabs">
+		{% for (let link in links): %}
+			<li{% if (link[2]): %} class="active"{% endif %}>
+				<a href="{{ dispatcher.build_url(link[0]) }}"{% if (link[2]): %} aria-current="page"{% endif %}>{{ link[1] }}</a>
+			</li>
+		{% endfor %}
+	</ul>
+</nav>
+
+<div id="view">
+	<div class="spinning">{{ _('Loading view…') }}</div>
+	<script>
+		L.require('ui').then(function(ui) {
+			ui.instantiateView('{{ detailed ? "status/nftables" : "status/firewall-summary-nav" }}');
+		});
+	</script>
+</div>
+
+{% include('footer') %}

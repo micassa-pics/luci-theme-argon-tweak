@@ -1,0 +1,17 @@
+{
+  "luci-mod-status-index": {
+    "read": {
+      "ubus": {
+        "luci.port_connections": [
+          "counts",
+          "active_clients",
+          "dhcp_status",
+          "history"
+        ]
+      },
+      "uci": [
+        "firewall", "micassa"
+      ]
+    }
+  }
+}

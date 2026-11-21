@@ -1,0 +1,16 @@
+{
+	"luci-app-dns-redirects": {
+		"description": "Read DNS redirect history and device names",
+		"read": {
+			"ubus": {
+				"luci.dns_redirects": [ "history", "hostname" ],
+				"luci-rpc": [ "getHostHints" ]
+			}
+		},
+		"write": {
+			"ubus": {
+				"luci.dns_redirects": [ "clear" ]
+			}
+		}
+	}
+}

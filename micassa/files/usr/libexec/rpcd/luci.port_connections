@@ -1,0 +1,115 @@
+#!/bin/sh
+case "$1:$2" in
+	list:) echo '{"counts":{},"active_clients":{"interface":""},"history":{"interface":""},"dhcp_status":{}}'; exit 0 ;;
+	call:history|call:counts|call:active_clients|call:dhcp_status) ;;
+	*) exit 1 ;;
+esac
+
+. /lib/functions/network.sh
+network_get_device lan_dev lan || lan_dev=''
+if [ "$2" = history ] || [ "$2" = active_clients ]; then
+	. /usr/share/libubox/jshn.sh
+	json_load "$(cat)" || exit 1
+	json_get_var iface interface
+	case "$iface" in ''|*[!a-zA-Z0-9_]*) echo '{}'; exit 0;; esac
+	network_get_device lan_dev "$iface" || { echo '{}'; exit 0; }
+fi
+if [ "$2" = history ]; then
+	dir=$(uci -q get luci_statistics.collectd_rrdtool.DataDir) || dir=/tmp/rrd
+	host=$(uci -q get luci_statistics.collectd.Hostname) || host=$(cat /proc/sys/kernel/hostname)
+	case "$host:$lan_dev" in *[!a-zA-Z0-9._:-]*) echo '{}'; exit 0;; esac
+	archive="$dir/$host/interface-$lan_dev/if_octets.rrd"
+	values=$(rrdtool fetch "$archive" AVERAGE -s end-600 -e now 2>/dev/null) || values=''
+	json_init
+	json_add_string stdout "$values"
+	json_dump
+	exit 0
+fi
+if [ "$2" = dhcp_status ]; then
+	[ -n "$lan_dev" ] && [ "$(uci -q get dhcp.lan.ignore)" = 1 ] || { echo '{}'; exit 0; }
+	network_get_ipaddr lan_address lan || { echo '{}'; exit 0; }
+	pihole=$(uci -q get micassa.status.pihole_ipv4) || { echo '{}'; exit 0; }
+	echo "$pihole" | awk -F. 'NF!=4 {exit 1} {for(i=1;i<=4;i++) if($i !~ /^[0-9]+$/ || length($i)>3 || $i>255) exit 1}' || { echo '{}'; exit 0; }
+	config=$(curl --fail --silent --noproxy '*' --interface "$lan_dev" --connect-timeout 1 --max-time 2 \
+		"http://$pihole/api/config/dhcp") || { echo '{}'; exit 0; }
+	active=$(jsonfilter -s "$config" -e '@.config.dhcp.active')
+	gateway=$(jsonfilter -s "$config" -e '@.config.dhcp.router')
+	[ "$active" = true ] && [ "$gateway" = "$lan_address" ] || { echo '{}'; exit 0; }
+	lease=$(jsonfilter -s "$config" -e '@.config.dhcp.leaseTime') || { echo '{}'; exit 0; }
+	[ -n "$lease" ] || lease=1h
+	. /usr/share/libubox/jshn.sh
+	json_init
+	json_add_boolean pihole 1
+	json_add_string leaseTime "$lease"
+	json_dump
+	exit 0
+fi
+if [ "$2" = active_clients ]; then
+	[ -n "$lan_dev" ] || exit 1
+	neighbors=$(ip -4 -s neigh show dev "$lan_dev") || exit 1
+	printf '%s\n' "$neighbors" | awk '
+		$NF ~ /^(REACHABLE|STALE|DELAY|PROBE)$/ {
+			mac=""; confirmed=-1
+			for (i=1; i<NF; i++) {
+				if ($i=="lladdr") mac=tolower($(i+1))
+				if ($i=="used" && split($(i+1), ages, "/")==3 && ages[2] ~ /^[0-9]+$/) confirmed=ages[2]+0
+			}
+			if (mac!="" && confirmed>=0 && confirmed<300 && !seen[mac]++) count++
+		}
+		END { printf "{\"count\":%d}\n", count }'
+	exit $?
+fi
+network_get_device wan_dev wan || wan_dev=''
+local_routes=$(ip -4 route show table local) || exit 1
+routes=$(ip -4 route show table main) || exit 1
+awk -v local_routes="$local_routes" -v routes="$routes" -v lan="$lan_dev" -v wan="$wan_dev" '
+function address(s, octets) {
+	split(s, octets, ".")
+	return ((octets[1]*256 + octets[2])*256 + octets[3])*256 + octets[4]
+}
+BEGIN {
+	n = split(local_routes, lines, "\n")
+	for (i=1; i<=n; i++) {
+		split(lines[i], f)
+		if (f[1]=="local" || f[1]=="broadcast") excluded[f[2]]=1
+	}
+	n = split(routes, lines, "\n")
+	for (i=1; i<=n; i++) {
+		nf=split(lines[i], f)
+		if (f[1]!="default" && f[1]!~/^[0-9]/) continue
+		for (j=2; j<nf && f[j]!="dev"; j++);
+		if (j>=nf) continue
+		split(f[1], prefix, "/")
+		bits=(f[1]=="default" ? 0 : (prefix[2]=="" ? 32 : prefix[2]+0))
+		divisor[++nr]=2^(32-bits)
+		base[nr]=int(address(prefix[1])/divisor[nr])
+		device[nr]=f[j+1]
+	}
+}
+function interface_for(s, ip, best, k) {
+	if (s in cache) return cache[s]
+	ip=address(s)
+	if (s in excluded || s ~ /^(127|0)\./ || ip>=224*2^24) return ""
+	for (k=1; k<=nr; k++)
+		if (int(ip/divisor[k])==base[k] && (!best || divisor[k]<divisor[best])) best=k
+	return cache[s]=device[best]
+}
+$1=="ipv4" {
+	for (dev in peers) delete peers[dev]
+	# Original and reply sources identify the two peers even after NAT.
+	for (i=2; i<=NF; i++) if ($i ~ /^src=/) {
+		d=interface_for(substr($i,5))
+		if (d!="") peers[d]=1
+	}
+	for (dev in peers) counts[dev]++
+}
+END {
+	printf "{"
+	sep=""
+	for (dev in counts) if (dev ~ /^[a-zA-Z0-9_.:-]+$/) {
+		printf "%s\"%s\":%d", sep, dev, counts[dev]
+		sep=","
+	}
+	print "}"
+}
+' /proc/net/nf_conntrack
