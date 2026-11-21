@@ -26,6 +26,10 @@ After approval, guide installation one option at a time. From a client on each s
 
 Use placeholders for local addresses. Never ask me to paste passwords, tokens, keys, leases, full configuration or client lists. Summarize my topology and expected cards, explain changes and rollback, and ask before changing anything.
 
+After the main setup checks, ask “Would you like me to check your installed LuCI plugins for awkward text wrapping, hidden controls or clipped content?” Offer this whether or not I chose banIP. If I decline, continue setup.
+
+If I accept, ask which devices, browsers and theme I use. Review the installed plugin pages at those screen sizes. Open dropdowns and dialogs, check long labels and table headings, and verify that buttons stay readable and reachable. Where installed, check the banIP feed picker with the sidebar open and the Bandix device-row actions. Use sample data or redacted screenshots if needed. Report each issue with the page, control, screen size and steps to reproduce it. Identify any pages you could not inspect. Ask before applying fixes, then recheck the affected pages at the same widths.
+
 As the final optional step, after the main installation and its checks are complete, ask this only if I chose banIP: “Would you also like the abuse.ch URLhaus malware feed?” Explain its purpose separately from the DoH endpoint list. If I decline, finish setup. If I say yes, walk me through these steps one at a time:
 
 1. Have me open https://auth.abuse.ch/ in my own browser. I can sign in with a listed provider or enter my email and follow the sign-in link myself. Wait for me to confirm that I can see my profile.
