@@ -10,10 +10,20 @@ const getHostname = rpc.declare({ object: 'luci.dns_redirects', method: 'hostnam
 const getHostHints = rpc.declare({ object: 'luci-rpc', method: 'getHostHints' });
 const clearHistory = rpc.declare({ object: 'luci.dns_redirects', method: 'clear', reject: true });
 const headingStyle = 'display: flex; align-items: center; justify-content: space-between; gap: 1em';
+const tableStyle = `
+.dns-redirect-scroll { max-width: 100%; overflow-x: auto; }
+.dns-redirect-scroll table.table { display: table; width: 100%; min-width: 43rem; table-layout: fixed; }
+.dns-redirect-scroll .table tr { display: table-row; }
+.dns-redirect-scroll .table tr > :is(th, td) { display: table-cell; box-sizing: border-box; text-align: start; white-space: normal; overflow-wrap: anywhere; }
+.dns-redirect-scroll .table tr > :first-child:not([colspan]) { text-align: left !important; }
+.dns-redirect-scroll .table td:first-child > span { display: block; text-align: left; }
+.dns-redirect-scroll .table tr > :last-child:not([colspan]) { text-align: end; font-variant-numeric: tabular-nums; }
+`;
 
 function makeTable(columns) {
+	const widths = ['22%', '16%', '19%', '12%', '19%', '12%'];
 	return E('table', { 'class': 'table' }, [ E('tr', { 'class': 'tr table-titles' },
-		columns.map(column => E('th', { 'class': 'th', 'scope': 'col' }, column))) ]);
+		columns.map((column, i) => E('th', { 'class': 'th', 'scope': 'col', style: 'width:' + widths[i] }, column))) ]);
 }
 
 function formatTime(time) {
@@ -28,10 +38,10 @@ function isLocalDestination(ip) {
 
 function redirectSection(title, names) {
 	const columns = [ _('Device'), _('Client IP'), _('Original DNS server'), _('Protocol') ];
-	const individual = makeTable([ _('Time'), ...columns ]);
-	const grouped = makeTable([ _('Last seen'), ...columns, _('Logged redirects') ]);
-	const individualBody = E('div', {}, [ individual ]);
-	const groupedBody = E('div', {}, [ grouped ]);
+	const individual = makeTable([ ...columns, _('Time'), _('Redirects') ]);
+	const grouped = makeTable([ ...columns, _('Last seen'), _('Redirects') ]);
+	const individualBody = E('div', { class: 'dns-redirect-scroll' }, [ individual ]);
+	const groupedBody = E('div', { class: 'dns-redirect-scroll' }, [ grouped ]);
 	groupedBody.hidden = true;
 	let entries = [];
 
@@ -46,9 +56,8 @@ function redirectSection(title, names) {
 				groups.get(key)[5]++;
 				continue;
 			}
-			const row = [ formatTime(time), E('span', {}, names.get(client) || client), client, server, protocol ];
+			const row = [ E('span', {}, names.get(client) || client), client, server, protocol, formatTime(time), 1 ];
 			if (table === grouped) {
-				row.push(1);
 				groups.set(key, row);
 			}
 			rowsToDisplay.push(row);
@@ -120,7 +129,7 @@ return view.extend({
 					names.set(ip, hint.name);
 		}
 
-		const devices = makeTable([ _('Device'), _('Client IP'), _('Local or private'), _('Other destinations'), _('Last seen') ]);
+		const devices = makeTable([ _('Device'), _('Client IP'), _('Local or private'), _('Other DNS'), _('Last seen'), _('Redirects') ]);
 		const localEvents = redirectSection(_('Local or private DNS destinations'), names);
 		const otherEvents = redirectSection(_('Other DNS destinations'), names);
 		const status = E('p', { 'role': 'status' }, _('Loading redirect history…'));
@@ -160,7 +169,7 @@ return view.extend({
 
 			const ordered = Array.from(byDevice.entries()).sort((a, b) => b[1].count - a[1].count || b[1].last - a[1].last);
 			cbi_update_table(devices, ordered.map(([ ip, stats ]) => [
-				E('span', {}, names.get(ip) || ip), ip, stats.local, stats.count - stats.local, formatTime(stats.last)
+				E('span', {}, names.get(ip) || ip), ip, stats.local, stats.count - stats.local, formatTime(stats.last), stats.count
 			]), empty.cloneNode(true));
 			const localRows = [], otherRows = [];
 			for (const entry of entries.reverse()) {
@@ -179,6 +188,7 @@ return view.extend({
 			}, _('Clear Entries')) : null
 		]);
 		return E([
+			E('style', {}, tableStyle),
 			E('h2', {}, _('DNS Redirects')),
 			E('div', { style: 'padding-inline-start: 1.25rem' }, [
 				E('p', {}, _('This page lists devices with hardcoded DNS entries which were caught and redirected to Pihole, or blocked outright')),
@@ -186,7 +196,7 @@ return view.extend({
 				status
 			]),
 			devicesHeading,
-			devices,
+			E('div', { class: 'dns-redirect-scroll' }, devices),
 			localEvents.node,
 			otherEvents.node
 		]);

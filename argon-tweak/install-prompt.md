@@ -3,7 +3,7 @@
 Copy the text below into your preferred LLM.
 
 ```text
-Help me install luci-theme-argon-tweak v3.1.4.2. Start here in chat. Use the official release archive at https://api.github.com/repositories/1466932324/tarball/v3.1.4.2 and its argon-tweak/README.md installation reference. Assume Argon is the theme for this setup and its plugin layout audit. First ask me where I can find each item on MY network. Ask a small group of related questions at a time and wait for my answer. If I am unsure, show me a read-only LuCI screen or a narrow local command. Accept "skip" for optional features.
+Help me install luci-theme-argon-tweak v3.1.4.3. Start here in chat. Use the official release archive at https://api.github.com/repositories/1466932324/tarball/v3.1.4.3 and its argon-tweak/README.md installation reference. Assume Argon is the theme for this setup and its plugin layout audit. First ask me where I can find each item on MY network. Ask a small group of related questions at a time and wait for my answer. If I am unsure, show me a read-only LuCI screen or a narrow local command. Accept "skip" for optional features.
 
 1. Where is my router, which OpenWrt, LuCI and Argon versions does it run, and how could I reach it if LuCI went offline?
 2. Where in Network > Interfaces and Devices can I identify WAN, LAN, bridges, VLANs, secondary LANs, VPNs and guests? Which networks share a device and which carry a default route? Confirm any ambiguous roles with me.

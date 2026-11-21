@@ -1,6 +1,6 @@
 # luci-theme-argon-tweak installation
 
-Paste the [installation prompt](install-prompt.md) into your LLM assistant to begin. The assistant uses this reference to check compatibility, plan the installation with you and verify the result. Release 3.1.4.2 targets OpenWrt 25.12 LuCI and Argon 3.1.4.
+Paste the [installation prompt](install-prompt.md) into your LLM assistant to begin. The assistant uses this reference to check compatibility, plan the installation with you and verify the result. Release 3.1.4.3 targets OpenWrt 25.12 LuCI and Argon 3.1.4.
 
 When upgrading from an earlier project name, copy your existing overlay settings to `/etc/config/argon-tweak` before installation. Update any existing DNS logging rule to use the prefix in the DNS Redirects section and restart the collector after installation. Fresh installs can skip this step.
 
@@ -25,7 +25,7 @@ Open **Status → Firewall Summary** and select **Refresh** to read the active n
 
 ### DNS Redirects
 
-[View the DNS Redirects mockup with fictional clients and grouped events.](../docs/dns-redirects-mockup.png)
+[Individual redirects on desktop](../docs/dns-redirects-mockup.png) · [Grouped redirects on tablet](../docs/dns-redirects-grouped-mockup.png)
 
 Open **Status → DNS Redirects** to identify clients sending plain DNS to an unexpected resolver. **Devices** shows each client's latest activity and counts for local/private and other DNS destinations. The two event tables show time, device, client IP, original DNS server and TCP or UDP. Use **Group** to combine repeated attempts by client, destination and protocol. **Clear Entries** asks for confirmation and clears saved history as well.
 

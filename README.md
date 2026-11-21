@@ -5,12 +5,12 @@
 **Copy this prompt into your LLM assistant to start setup.**
 
 ```text
-Help me install luci-theme-argon-tweak v3.1.4.2. Read argon-tweak/install-prompt.md in the official release at https://api.github.com/repositories/1466932324/tarball/v3.1.4.2 and follow it with me. Start by asking about my router and the features I want. Show me the plan and wait for my approval before changing anything.
+Help me install luci-theme-argon-tweak v3.1.4.3. Read argon-tweak/install-prompt.md in the official release at https://api.github.com/repositories/1466932324/tarball/v3.1.4.3 and follow it with me. Start by asking about my router and the features I want. Show me the plan and wait for my approval before changing anything.
 ```
 
 If your assistant cannot open the archive, [copy the full setup prompt](argon-tweak/install-prompt.md) into the chat. The assistant guides installation and verification, or performs them with authorized router access.
 
-Release **v3.1.4.2** targets OpenWrt 25.12 and Argon 3.1.4. [Installation reference](argon-tweak/README.md)
+Release **v3.1.4.3** targets OpenWrt 25.12 and Argon 3.1.4. [Installation reference](argon-tweak/README.md)
 
 ### What the tweaks do
 
@@ -37,7 +37,9 @@ Open **Status → Firewall Summary** to see which DNS rules, port forwards and b
 
 Open **Status → DNS Redirects** to see which clients tried to use another DNS server and which server each client contacted. Group repeated attempts by client, destination and protocol. Recent history is saved every 30 minutes and at clean shutdown. [DNS Redirects guide](argon-tweak/README.md#dns-redirects)
 
-![DNS Redirects mockup showing two fictional devices and repeated attempts grouped by destination](docs/dns-redirects-mockup.png)
+![DNS Redirects with left-aligned device names, individual attempts and per-device totals](docs/dns-redirects-mockup.png)
+
+[View the grouped DNS Redirects example at tablet width](docs/dns-redirects-grouped-mockup.png)
 
 [Upstream theme documentation](https://github.com/jerrykuku/luci-theme-argon/tree/v3.1.4)
 
