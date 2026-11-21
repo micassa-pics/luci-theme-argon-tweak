@@ -38,6 +38,7 @@ function isLocalDestination(ip) {
 }
 
 function actionLabel(action) {
+	if (action === 'banip_doh') return _('Blocked (banIP DoH list)');
 	return action === 'pihole' ? _('Pi-hole') : action === 'blocked' ? _('Blocked') : '—';
 }
 
@@ -198,7 +199,7 @@ return view.extend({
 			E('h2', {}, _('DNS Redirects')),
 			E('div', { style: 'padding-inline-start: 1.25rem' }, [
 				E('p', {}, _('This page lists devices with hardcoded DNS entries which were caught and redirected to Pihole, or blocked outright')),
-				E('p', {}, _('Logged DNS attempts show the firewall action. Logging is rate-limited. The latest 1,000 events are saved every 30 minutes and at shutdown.')),
+				E('p', {}, _('A banIP DoH list hit means the client contacted a listed endpoint. The encrypted query is not visible. The latest 1,000 rate-limited events are saved every 30 minutes and at shutdown.')),
 				status
 			]),
 			devicesHeading,

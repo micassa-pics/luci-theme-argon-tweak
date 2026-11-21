@@ -35,7 +35,7 @@ snapshot() {
 		/^[0-9]+\.[0-9]+\t/ {
 			if ((NF == 4 || NF == 5) && address($2) && address($3) && $4 ~ /^(TCP|UDP)$/) {
 				action = (NF == 4 ? "unrecorded" : $5)
-				if (action ~ /^(pihole|blocked|unrecorded)$/) print $1, $2, $3, $4, action
+				if (action ~ /^(pihole|blocked|banip_doh|unrecorded)$/) print $1, $2, $3, $4, action
 			}
 			next
 		}
@@ -47,8 +47,11 @@ snapshot() {
 				# /proc/uptime is precise to a hundredth of a second.
 				if (stamp + 0 < cutoff + 0.01) next
 			}
-			if (!match($0, / kernel: (\[[^]]*\][[:space:]]*)?argon-tweak-dns-(redirect|block): /)) next
-			action = (substr($0, RSTART, RLENGTH) ~ /-block: $/ ? "blocked" : "pihole")
+			if (match($0, / kernel: (\[[^]]*\][[:space:]]*)?banIP\/outbound\/reject\/doh[.]v[46]: /))
+				action = "banip_doh"
+			else if (match($0, / kernel: (\[[^]]*\][[:space:]]*)?argon-tweak-dns-(redirect|block): /))
+				action = (substr($0, RSTART, RLENGTH) ~ /-block: $/ ? "blocked" : "pihole")
+			else next
 			split(substr($0, RSTART + RLENGTH), fields, / +/)
 			client = server = proto = port = ""
 			for (i in fields) {
@@ -57,7 +60,8 @@ snapshot() {
 				if (fields[i] ~ /^PROTO=/) proto = substr(fields[i], 7)
 				if (fields[i] ~ /^DPT=/) port = substr(fields[i], 5)
 			}
-			if (address(client) && address(server) && proto ~ /^(TCP|UDP)$/ && (port == 53 || (action == "blocked" && port == 853)))
+			if (address(client) && address(server) && proto ~ /^(TCP|UDP)$/ &&
+			    (action == "banip_doh" ? port ~ /^[0-9]+$/ && port + 0 >= 1 && port + 0 <= 65535 : port == 53 || (action == "blocked" && port == 853)))
 				print substr($6, 2, length($6)-2), client, server, proto, action
 		}
 	' | tail -n 1000

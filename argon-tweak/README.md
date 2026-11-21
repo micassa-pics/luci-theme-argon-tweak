@@ -1,6 +1,6 @@
 # luci-theme-argon-tweak installation
 
-Paste the [installation prompt](install-prompt.md) into your LLM assistant to begin. The assistant uses this reference to check compatibility, plan the installation with you and verify the result. Release 3.1.4.4 targets OpenWrt 25.12 LuCI and Argon 3.1.4.
+Paste the [installation prompt](install-prompt.md) into your LLM assistant to begin. The assistant uses this reference to check compatibility, plan the installation with you and verify the result. Release 3.1.4.5 targets OpenWrt 25.12 LuCI and Argon 3.1.4.
 
 When upgrading from an earlier project name, copy your existing overlay settings to `/etc/config/argon-tweak` before installation. Update any existing DNS logging rule to use the prefix in the DNS Redirects section and restart the collector after installation. Fresh installs can skip this step.
 
@@ -30,6 +30,8 @@ Open **Status → Firewall Summary** and select **Refresh** to read the active n
 Open **Status → DNS Redirects** to identify clients sending plain DNS to an unexpected resolver. **Devices** shows each client's latest activity and counts for local/private and other DNS destinations. The two event tables show time, device, client IP, original DNS server and TCP or UDP. Use **Group** to combine repeated attempts by client, destination and protocol. **Clear Entries** asks for confirmation and clears saved history as well.
 
 The **Action** column shows **Pi-hole** for a logged DNS redirect and **Blocked** for a logged reject or drop. A device can show both. Grouped rows keep the actions separate even when the client, destination and protocol match. A dash means that the saved event predates action tracking. Use Pi-hole’s query log for domain names and Pi-hole’s own filtering decisions.
+
+**Blocked (banIP DoH list)** identifies a packet rejected by the outbound banIP DoH feed. To enable it, select the DoH feed in banIP, enable outbound logging with a nonzero log rate limit, reload banIP, and restart the DNS Redirects collector after upgrading. banIP logs outbound hits across its active feeds; this page selects only the exact `doh.v4` and `doh.v6` reject messages. The client and destination are visible, while the encrypted contents remain private. Counts represent logged packets, so retries can produce multiple entries. Collection starts when logging is enabled.
 
 Use the exact log prefix `argon-tweak-dns-redirect: ` on the match leading to Pi-hole destination NAT, and `argon-tweak-dns-block: ` on the match leading to a DNS rejection or drop. Include the trailing space. The collector accepts TCP/UDP port 53 and blocked port 853 events, including IPv6. Apply rate limiting to logging only so every matching packet still reaches the enforcement rule. The collector keeps the latest 1,000 logged events and checkpoints every 30 minutes and on clean shutdown. Start it on the router:
 
