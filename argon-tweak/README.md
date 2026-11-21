@@ -1,6 +1,6 @@
 # luci-theme-argon-tweak installation
 
-Paste the [installation prompt](install-prompt.md) into your LLM assistant to begin. The assistant uses this reference to check compatibility, plan the installation with you and verify the result. Release 3.1.4.1 targets OpenWrt 25.12 LuCI and Argon 3.1.4.
+Paste the [installation prompt](install-prompt.md) into your LLM assistant to begin. The assistant uses this reference to check compatibility, plan the installation with you and verify the result. Release 3.1.4.2 targets OpenWrt 25.12 LuCI and Argon 3.1.4.
 
 When upgrading from an earlier project name, copy your existing overlay settings to `/etc/config/argon-tweak` before installation. Update any existing DNS logging rule to use the prefix in the DNS Redirects section and restart the collector after installation. Fresh installs can skip this step.
 

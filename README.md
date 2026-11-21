@@ -2,11 +2,15 @@
 
 ## Install the tweaks
 
-1. **[Open the installation prompt](argon-tweak/install-prompt.md)** and copy the text in the box.
-2. Paste it into your LLM assistant. It checks compatibility, asks about your network and helps you choose the tweaks you want.
-3. Review the plan. Once you approve, the assistant guides installation, checks the selected features and gives you the rollback command. An assistant with authorized router access can perform those steps for you.
+**Copy this prompt into your LLM assistant to start setup.**
 
-Release **v3.1.4.1** targets OpenWrt 25.12 and Argon 3.1.4. [Installation reference](argon-tweak/README.md)
+```text
+Help me install luci-theme-argon-tweak v3.1.4.2. Read argon-tweak/install-prompt.md in the official release at https://api.github.com/repositories/1466932324/tarball/v3.1.4.2 and follow it with me. Start by asking about my router and the features I want. Show me the plan and wait for my approval before changing anything.
+```
+
+If your assistant cannot open the archive, [copy the full setup prompt](argon-tweak/install-prompt.md) into the chat. The assistant guides installation and verification, or performs them with authorized router access.
+
+Release **v3.1.4.2** targets OpenWrt 25.12 and Argon 3.1.4. [Installation reference](argon-tweak/README.md)
 
 ### What the tweaks do
 
