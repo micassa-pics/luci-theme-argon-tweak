@@ -2,16 +2,11 @@
 
 ## Install the tweaks
 
-1. Start with OpenWrt 25.12, LuCI and Argon 3.1.4. Install the optional LuCI apps you want to use.
-2. [Download v3.1.4.1](https://api.github.com/repositories/1466932324/tarball/v3.1.4.1) and extract it on the router. From the extracted directory, run as root:
+1. **[Open the installation prompt](argon-tweak/install-prompt.md)** and copy the text in the box.
+2. Paste it into your LLM assistant. It checks compatibility, asks about your network and helps you choose the tweaks you want.
+3. Review the plan. Once you approve, the assistant guides installation, checks the selected features and gives you the rollback command. An assistant with authorized router access can perform those steps for you.
 
-   ```sh
-   sh argon-tweak/install.sh
-   ```
-
-3. Keep the rollback command the installer prints. Refresh LuCI and sign in again.
-
-[Full installation guide](argon-tweak/README.md) · [Copy the guided setup prompt](argon-tweak/install-prompt.md)
+Release **v3.1.4.1** targets OpenWrt 25.12 and Argon 3.1.4. [Installation reference](argon-tweak/README.md)
 
 ### What the tweaks do
 
