@@ -1,6 +1,6 @@
 # luci-theme-argon-tweak installation
 
-Paste the [installation prompt](install-prompt.md) into your LLM assistant to begin. The assistant uses this reference to check compatibility, plan the installation with you and verify the result. Release 3.1.4.3 targets OpenWrt 25.12 LuCI and Argon 3.1.4.
+Paste the [installation prompt](install-prompt.md) into your LLM assistant to begin. The assistant uses this reference to check compatibility, plan the installation with you and verify the result. Release 3.1.4.4 targets OpenWrt 25.12 LuCI and Argon 3.1.4.
 
 When upgrading from an earlier project name, copy your existing overlay settings to `/etc/config/argon-tweak` before installation. Update any existing DNS logging rule to use the prefix in the DNS Redirects section and restart the collector after installation. Fresh installs can skip this step.
 
@@ -29,9 +29,9 @@ Open **Status → Firewall Summary** and select **Refresh** to read the active n
 
 Open **Status → DNS Redirects** to identify clients sending plain DNS to an unexpected resolver. **Devices** shows each client's latest activity and counts for local/private and other DNS destinations. The two event tables show time, device, client IP, original DNS server and TCP or UDP. Use **Group** to combine repeated attempts by client, destination and protocol. **Clear Entries** asks for confirmation and clears saved history as well.
 
-The collector reads tagged IPv4 port 53 firewall events. It records the original destination; the matching firewall rule determines whether the packet was redirected or blocked. For queried domain names and Pi-hole's answer, consult the Pi-hole query log. Encrypted DNS blocks on other ports must be checked in the matching firewall or banIP counters. An empty event table can also mean the client used its assigned resolver, the traffic stayed on the same bridge, or logging was disabled.
+The **Action** column shows **Pi-hole** for a logged DNS redirect and **Blocked** for a logged reject or drop. A device can show both. Grouped rows keep the actions separate even when the client, destination and protocol match. A dash means that the saved event predates action tracking. Use Pi-hole’s query log for domain names and Pi-hole’s own filtering decisions.
 
-To enable history, add a rate-limited log action with the exact prefix `argon-tweak-dns-redirect: ` (including the trailing space) at the point where the original client and destination are still visible, before destination NAT. Apply rate limiting to the **log action only** so all matching packets still reach the enforcement rule. The collector keeps the latest 1,000 logged events and checkpoints every 30 minutes and on clean shutdown. Start it on the router:
+Use the exact log prefix `argon-tweak-dns-redirect: ` on the match leading to Pi-hole destination NAT, and `argon-tweak-dns-block: ` on the match leading to a DNS rejection or drop. Include the trailing space. The collector accepts TCP/UDP port 53 and blocked port 853 events, including IPv6. Apply rate limiting to logging only so every matching packet still reaches the enforcement rule. The collector keeps the latest 1,000 logged events and checkpoints every 30 minutes and on clean shutdown. Start it on the router:
 
 ```sh
 /etc/init.d/dns-redirects enable

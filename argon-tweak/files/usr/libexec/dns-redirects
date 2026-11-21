@@ -28,13 +28,18 @@ snapshot() {
 				if (octets[i] !~ /^[0-9]+$/ || length(octets[i]) > 3 || octets[i] > 255) return 0
 			return 1
 		}
+		function address(ip) {
+			return ipv4(ip) || (ip ~ /:/ && length(ip) <= 45 && ip ~ /^[0-9a-fA-F:.]+$/)
+		}
 		BEGIN { OFS = "\t" }
 		/^[0-9]+\.[0-9]+\t/ {
-			if (NF == 4 && ipv4($2) && ipv4($3) && $4 ~ /^(TCP|UDP)$/)
-				print $1, $2, $3, $4
+			if ((NF == 4 || NF == 5) && address($2) && address($3) && $4 ~ /^(TCP|UDP)$/) {
+				action = (NF == 4 ? "unrecorded" : $5)
+				if (action ~ /^(pihole|blocked|unrecorded)$/) print $1, $2, $3, $4, action
+			}
 			next
 		}
-		$6 ~ /^\[[0-9]+\.[0-9]+\]$/ && $7 == "kern.info" && $8 == "kernel:" {
+		$6 ~ /^\[[0-9]+\.[0-9]+\]$/ && $7 ~ /^kern[.]/ && $8 == "kernel:" {
 			if (cutoff != "") {
 				if (!match($0, / kernel: \[[[:space:]]*[0-9]+\.[0-9]+\]/)) next
 				stamp = substr($0, RSTART, RLENGTH)
@@ -42,7 +47,8 @@ snapshot() {
 				# /proc/uptime is precise to a hundredth of a second.
 				if (stamp + 0 < cutoff + 0.01) next
 			}
-			if (!match($0, / kernel: (\[[^]]*\][[:space:]]*)?argon-tweak-dns-redirect: /)) next
+			if (!match($0, / kernel: (\[[^]]*\][[:space:]]*)?argon-tweak-dns-(redirect|block): /)) next
+			action = (substr($0, RSTART, RLENGTH) ~ /-block: $/ ? "blocked" : "pihole")
 			split(substr($0, RSTART + RLENGTH), fields, / +/)
 			client = server = proto = port = ""
 			for (i in fields) {
@@ -51,8 +57,8 @@ snapshot() {
 				if (fields[i] ~ /^PROTO=/) proto = substr(fields[i], 7)
 				if (fields[i] ~ /^DPT=/) port = substr(fields[i], 5)
 			}
-			if (ipv4(client) && ipv4(server) && proto ~ /^(TCP|UDP)$/ && port == 53)
-				print substr($6, 2, length($6)-2), client, server, proto
+			if (address(client) && address(server) && proto ~ /^(TCP|UDP)$/ && (port == 53 || (action == "blocked" && port == 853)))
+				print substr($6, 2, length($6)-2), client, server, proto, action
 		}
 	' | tail -n 1000
 }

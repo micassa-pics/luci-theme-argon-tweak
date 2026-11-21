@@ -22,7 +22,7 @@ start_service() {
 	fi
 
 	procd_open_instance collector
-	procd_set_param command /sbin/logread -f -t -z 0 -e 'argon-tweak-dns-redirect: ' -S 512 -F "$ram/events"
+	procd_set_param command /sbin/logread -f -t -z 0 -e 'argon-tweak-dns-' -S 512 -F "$ram/events"
 	procd_set_param respawn 3600 5 0
 	procd_close_instance
 

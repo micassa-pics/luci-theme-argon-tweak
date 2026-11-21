@@ -3,7 +3,7 @@
 Copy the text below into your preferred LLM.
 
 ```text
-Help me install luci-theme-argon-tweak v3.1.4.3. Start here in chat. Use the official release archive at https://api.github.com/repositories/1466932324/tarball/v3.1.4.3 and its argon-tweak/README.md installation reference. Assume Argon is the theme for this setup and its plugin layout audit. First ask me where I can find each item on MY network. Ask a small group of related questions at a time and wait for my answer. If I am unsure, show me a read-only LuCI screen or a narrow local command. Accept "skip" for optional features.
+Help me install luci-theme-argon-tweak v3.1.4.4. Start here in chat. Use the official release archive at https://api.github.com/repositories/1466932324/tarball/v3.1.4.4 and its argon-tweak/README.md installation reference. Assume Argon is the theme for this setup and its plugin layout audit. First ask me where I can find each item on MY network. Ask a small group of related questions at a time and wait for my answer. If I am unsure, show me a read-only LuCI screen or a narrow local command. Accept "skip" for optional features.
 
 1. Where is my router, which OpenWrt, LuCI and Argon versions does it run, and how could I reach it if LuCI went offline?
 2. Where in Network > Interfaces and Devices can I identify WAN, LAN, bridges, VLANs, secondary LANs, VPNs and guests? Which networks share a device and which carry a default route? Confirm any ambiguous roles with me.
@@ -18,7 +18,7 @@ Then ask which DNS protections I want to install. Offer each independently, incl
 - Advertise the approved resolver by DHCP. For clients with hardcoded DNS, redirect both TCP and UDP port 53 or reject external DNS, according to my preference.
 - Block external DNS over TLS on TCP 853 and DNS over QUIC on UDP 853.
 - Install banIP and luci-app-banip if needed and enable an outbound IP feed for known DoH endpoints. Explain the coverage limits and shared-IP tradeoff. Use domain feeds in Pi-hole and IP feeds in banIP.
-- Enable the DNS Redirects collector and rate-limited logging for intercepted IPv4 port 53 traffic.
+- Enable the DNS Redirects collector and rate-limited logging for DNS attempts. Use the guide’s distinct log prefixes for Pi-hole redirects and DNS blocks, and verify the Action column for each policy I selected.
 
 For my choices, confirm the approved resolver, its upstream path, the selected client LANs/VLANs, IPv4/IPv6 use, and VPN or device exceptions. Check whether clients actually send the traffic through this router. Account for the return path to a resolver on the same LAN and preserve its ability to resolve upstream. Check installed packages, the OpenWrt release, firewall backend and available package manager before giving installation commands. Give only the steps for my selections, name the device where each step runs, and provide a rollback for each policy change separately from the overlay rollback.
 

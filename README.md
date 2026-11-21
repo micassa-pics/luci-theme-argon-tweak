@@ -5,18 +5,18 @@
 **Copy this prompt into your LLM assistant to start setup.**
 
 ```text
-Help me install luci-theme-argon-tweak v3.1.4.3. Read argon-tweak/install-prompt.md in the official release at https://api.github.com/repositories/1466932324/tarball/v3.1.4.3 and follow it with me. Start by asking about my router and the features I want. Show me the plan and wait for my approval before changing anything.
+Help me install luci-theme-argon-tweak v3.1.4.4. Read argon-tweak/install-prompt.md in the official release at https://api.github.com/repositories/1466932324/tarball/v3.1.4.4 and follow it with me. Start by asking about my router and the features I want. Show me the plan and wait for my approval before changing anything.
 ```
 
 If your assistant cannot open the archive, [copy the full setup prompt](argon-tweak/install-prompt.md) into the chat. The assistant guides installation and verification, or performs them with authorized router access.
 
-Release **v3.1.4.3** targets OpenWrt 25.12 and Argon 3.1.4. [Installation reference](argon-tweak/README.md)
+Release **v3.1.4.4** targets OpenWrt 25.12 and Argon 3.1.4. [Installation reference](argon-tweak/README.md)
 
 ### What the tweaks do
 
 - **Status Overview** shows ten-minute WAN and LAN traffic charts, active clients, and gauges for memory and mounted storage. Shared bridges get one traffic chart.
 - **Firewall Summary** groups active rules and lets you search by address, port or rule name and inspect packet counts.
-- **DNS Redirects** groups logged port 53 attempts by device and original resolver. Enable the collector and matching firewall logging to retain history across restarts.
+- **DNS Redirects** shows whether a logged attempt was redirected to Pi-hole or blocked by the firewall. Enable the collector and matching firewall logging to retain history across restarts.
 - **Bandwidth monitoring** adds sortable host and IP columns in nlbwmon, a 30-minute Bandix traffic view and icon buttons for device actions.
 - **System and services** adds process metrics and controls, organizes the Dynamic DNS page, labels interface roles in Watchcat and explains collectd settings.
 - **LuCI usability** adjusts app permissions and keeps touch dropdowns such as the banIP feed picker within view.
