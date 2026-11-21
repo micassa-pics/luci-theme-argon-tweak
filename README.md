@@ -1,4 +1,6 @@
-# argon-tweak
+# luci-theme-argon-tweak
+
+**Version 3.1.4.1** is the first fork release based on upstream Argon 3.1.4. The fourth number identifies the fork revision. Download the ZIP or tar.gz from GitHub Releases, extract it, and follow the [installation guide](argon-tweak/README.md).
 
 A fork of [Argon 3.1.4](https://github.com/jerrykuku/luci-theme-argon/releases/tag/v3.1.4) with an optional OpenWrt LuCI page overlay. Status Overview adds per-device traffic history, shared-bridge handling, active clients and mount-aware storage gauges. Also included are the customized Processes, Firewall Summary, DNS Redirects, nlbwmon, Bandix, Dynamic DNS, Watchcat and collectd pages, application permissions and touch dropdown placement for banIP.
 

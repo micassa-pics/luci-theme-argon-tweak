@@ -6,14 +6,16 @@
 
 include $(TOPDIR)/rules.mk
 
+# The fork uses the same Argon files, updater and package hooks as upstream.
+LUCI_NAME:=luci-theme-argon
 LUCI_TITLE:=Argon Theme
 # Older SDKs require the coreutils parent menu to enable coreutils-timeout.
 # Virtual wget providers include wget-nossl, but every wallpaper API uses HTTPS.
 LUCI_DEPENDS:=+luci-base +wget-ssl +ca-bundle +jsonfilter +ucode-mod-math +flock +coreutils +coreutils-timeout
 # Keep existing translation package names and the argon-config message domain.
 LUCI_BASENAME:=argon-config
-PKG_VERSION:=3.1.4
-PKG_RELEASE:=20261113
+PKG_VERSION:=3.1.4.1
+PKG_RELEASE:=1
 PKG_LICENSE:=Apache-2.0 MIT
 
 # LuCI derives translations independently of the theme version. Keep release

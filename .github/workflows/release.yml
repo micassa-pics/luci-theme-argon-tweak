@@ -4,6 +4,8 @@ on:
   push:
     tags:
       - "*"
+      # Four-component fork tags publish a source release with the optional overlay.
+      - "!v[0-9]+.[0-9]+.[0-9]+.[0-9]+"
 
 permissions:
   contents: write

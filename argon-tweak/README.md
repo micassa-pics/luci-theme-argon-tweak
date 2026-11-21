@@ -1,6 +1,6 @@
-# Page overlay installation
+# luci-theme-argon-tweak installation
 
-Start with the [copyable installation assistant prompt](install-prompt.md). This overlay targets OpenWrt 25.12 LuCI and Argon 3.1.4. Install the desired LuCI applications first. On the router, from an extracted copy of this branch, run:
+Start with the [copyable installation assistant prompt](install-prompt.md). Release 3.1.4.1 targets OpenWrt 25.12 LuCI and Argon 3.1.4. Install Argon and the desired LuCI applications first. On the router, from the top directory of the extracted release, run:
 
 ```sh
 sh argon-tweak/install.sh
